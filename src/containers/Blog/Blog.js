@@ -10,7 +10,8 @@ class Blog extends Component {
 
     state = {
         posts: [],
-        selectedPostId: null
+        selectedPostId: null,
+        error: false
     }
 
     componentDidMount () {
@@ -28,23 +29,36 @@ class Blog extends Component {
 
                 this.setState({posts: updatedPosts});
                 console.log(updatedPosts);
+            })
+            .catch(error => {
+                console.log("[Blog.js] catch section, error is:", error);
+                this.setState({error: true});
             });
     }
 
     postClickedHandler = (id) => {
-        console.log("Blog.js] postClickedHandler, id is:", id);
+        console.log("[Blog.js] postClickedHandler, id is:", id);
         this.setState({selectedPostId: id})
     }
 
     render () {
 
-        const posts = this.state.posts.map(post => {
-            return <Post 
-                    key={post.id}   
-                    title={post.title}
-                    author={post.author}
-                    clicked={() => this.postClickedHandler(post.id)}/>
-        });
+        let posts = (<div>
+            <p style={{textAlign: 'center'}}>Something went wrong with posts data. <br />
+            Please try again later.</p>
+        </div>)
+
+        if(!this.state.error) {
+
+            posts = this.state.posts.map(post => {
+                return <Post 
+                        key={post.id}   
+                        title={post.title}
+                        author={post.author}
+                        clicked={() => this.postClickedHandler(post.id)}/>
+            });  
+        
+        }
 
         return (
             <div>
